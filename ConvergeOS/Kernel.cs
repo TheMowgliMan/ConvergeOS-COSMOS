@@ -8,7 +8,7 @@ namespace ConvergeOS
     public class Kernel : Sys.Kernel
     {
         // Is debug on?
-        public bool is_debug = false;
+        public bool is_debug = true;
         protected static int GetRevision()
         {
             return 7;
