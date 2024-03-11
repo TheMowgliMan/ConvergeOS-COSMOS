@@ -7,9 +7,11 @@ namespace ConvergeOS
 {
     public class Kernel : Sys.Kernel
     {
+        // Is debug on?
+        public bool is_debug = false;
         protected static int GetRevision()
         {
-            return 6;
+            return 7;
         }
 
         protected override void BeforeRun()
@@ -40,15 +42,31 @@ namespace ConvergeOS
                     }
 
                     Console.Write("\n");
+                } else if (cmd_split[0] == "debug") {
+                    if (cmd_split.Length > 2){
+                        Console.WriteLine("Too many arguments for 'debug'!");
+                    } else
+                    {
+                        if (cmd_split[1] == "1")
+                        {
+                            is_debug = true;
+                        } else if (cmd_split[1] == "0") { is_debug = false; } else
+                        {
+                            Console.WriteLine("Incorrect arguments for 'debug'!");
+                        }
+                    }
                 } else
                 {
                     Console.WriteLine("Command '" + cmd_split[0] + "' does not exist");
 
                     // debug the command
-                    for (int i = 0; i < cmd_split.Length; i++)
+                    if (is_debug == true)
                     {
-                        Console.Write(cmd_split[i]);
-                        Console.Write(" ");
+                        for (int i = 0; i < cmd_split.Length; i++)
+                        {
+                            Console.Write(cmd_split[i]);
+                            Console.Write(" ");
+                        }
                     }
 
                     Console.Write("\n");
