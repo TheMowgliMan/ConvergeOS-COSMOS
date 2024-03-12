@@ -13,7 +13,7 @@ namespace ConvergeOS
         // get revision
         protected static int GetRevision()
         {
-            return 8;
+            return 10;
         }
 
         // output error
@@ -74,6 +74,10 @@ namespace ConvergeOS
                         }
                     }
                 }
+                else if (cmd_split[0] == "exit")
+                {
+                    System.Environment.Exit(0);
+                }
                 else
                 {
                     Error("Command '" + cmd_split[0] + "' does not exist");
@@ -83,7 +87,7 @@ namespace ConvergeOS
                 if (is_debug == true)
                 {
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.Write("\nCommand debug info:");
+                    Console.Write("\nCommand debug info:\n");
                     for (int i = 0; i < cmd_split.Length; i++)
                     {
                         Console.Write("cmd_split[" + i.ToString() + "] = '");
