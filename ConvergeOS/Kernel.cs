@@ -9,9 +9,21 @@ namespace ConvergeOS
     {
         // Is debug on?
         public bool is_debug = true;
+
+        // get revision
         protected static int GetRevision()
         {
-            return 7;
+            return 8;
+        }
+
+        // output error
+        protected static void Error(string msg)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(msg);
+            Console.ForegroundColor = ConsoleColor.White;
+
+            return;
         }
 
         protected override void BeforeRun()
@@ -42,36 +54,50 @@ namespace ConvergeOS
                     }
 
                     Console.Write("\n");
-                } else if (cmd_split[0] == "debug") {
-                    if (cmd_split.Length > 2){
-                        Console.WriteLine("Too many arguments for 'debug'!");
-                    } else
+                }
+                else if (cmd_split[0] == "debug")
+                {
+                    if (cmd_split.Length > 2)
+                    {
+                        Error("Too many arguments for 'debug'!");
+                    }
+                    else
                     {
                         if (cmd_split[1] == "1")
                         {
                             is_debug = true;
-                        } else if (cmd_split[1] == "0") { is_debug = false; } else
+                        }
+                        else if (cmd_split[1] == "0") { is_debug = false; }
+                        else
                         {
-                            Console.WriteLine("Incorrect arguments for 'debug'!");
+                            Error("Incorrect arguments for 'debug'!");
                         }
                     }
-                } else
+                }
+                else
                 {
-                    Console.WriteLine("Command '" + cmd_split[0] + "' does not exist");
+                    Error("Command '" + cmd_split[0] + "' does not exist");
+                }
 
-                    // debug the command
-                    if (is_debug == true)
+                // debug the command
+                if (is_debug == true)
+                {
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.Write("\nCommand debug info:");
+                    for (int i = 0; i < cmd_split.Length; i++)
                     {
-                        for (int i = 0; i < cmd_split.Length; i++)
-                        {
-                            Console.Write(cmd_split[i]);
-                            Console.Write(" ");
-                        }
+                        Console.Write("cmd_split[" + i.ToString() + "] = '");
+                        Console.Write(cmd_split[i]);
+                        Console.Write("'\n");
                     }
 
                     Console.Write("\n");
+
+                    // clear color
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
-            } 
-        }
+            }
+        } 
     }
 }
+
