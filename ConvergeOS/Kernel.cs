@@ -95,10 +95,28 @@ namespace Kernel
         /// </summary>
         protected override void BeforeRun()
         {
-            // Get our startup text
-            Console.Write("AspectOS Converge r");
+            // Clear console
+            Console.Clear();
+
+            // Get our startup text, add pretty colors
+            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.Write("AspectOS");
+
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.WriteLine(" Converge");
+
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.Write(" r");
+
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.Write(GetRevision());
+
+            // We leave it color white
+            Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(" pre-alpha");
+
+            // Startup beep time!
+            Console.Beep();
         }
 
         /// <summary>
