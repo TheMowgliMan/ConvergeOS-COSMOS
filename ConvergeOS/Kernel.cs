@@ -5,19 +5,30 @@ using Sys = Cosmos.System;
 
 namespace ConvergeOS
 {
+    /// <summary>
+    /// Low level processes. Main class that calls all others, but has some public methods and fields which can be called by other classes.
+    /// </summary>
     public class Kernel : Sys.Kernel
     {
-        // Is debug on?
+        /// <summary>
+        /// Contains debug status.
+        /// </summary>
         public bool is_debug = true;
 
-        // get revision
+        /// <summary>
+        /// Returns current revision.
+        /// </summary>
+        /// <returns>Current revision as an int</returns>
         protected static int GetRevision()
         {
-            return 10;
+            return 11;
         }
 
-        // output error
-        protected static void Error(string msg)
+        /// <summary>
+        /// Displays an error. Doesn't actually raise any errors, however.
+        /// </summary>
+        /// <param name="msg">Error message</param>
+        protected static void DisplayError(string msg)
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(msg);
@@ -26,14 +37,20 @@ namespace ConvergeOS
             return;
         }
 
+        /// <summary>
+        /// Overridden COSMOS function. DO NOT CALL!
+        /// </summary>
         protected override void BeforeRun()
         {
             // Get our startup text
-            Console.Write("ConvergeOS r");
+            Console.Write("AspectOS Converge r");
             Console.Write(GetRevision());
-            Console.WriteLine(" pre-alpha copyright 2024 Nikolai Kopec");
+            Console.WriteLine(" pre-alpha");
         }
 
+        /// <summary>
+        /// Overriden COSMOS function. DO NOT CALL!
+        /// </summary>
         protected override void Run()
         {
             // Get input
@@ -59,7 +76,7 @@ namespace ConvergeOS
                 {
                     if (cmd_split.Length > 2)
                     {
-                        Error("Too many arguments for 'debug'!");
+                        DisplayError("Too many arguments for 'debug'!");
                     }
                     else
                     {
@@ -70,7 +87,7 @@ namespace ConvergeOS
                         else if (cmd_split[1] == "0") { is_debug = false; }
                         else
                         {
-                            Error("Incorrect arguments for 'debug'!");
+                            DisplayError("Incorrect arguments for 'debug'!");
                         }
                     }
                 }
@@ -80,7 +97,7 @@ namespace ConvergeOS
                 }
                 else
                 {
-                    Error("Command '" + cmd_split[0] + "' does not exist");
+                    DisplayError("Command '" + cmd_split[0] + "' does not exist");
                 }
 
                 // debug the command
