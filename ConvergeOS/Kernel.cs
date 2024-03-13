@@ -103,7 +103,7 @@ namespace Kernel
             Console.Write("AspectOS");
 
             Console.ForegroundColor = ConsoleColor.DarkBlue;
-            Console.WriteLine(" Converge");
+            Console.Write(" Converge");
 
             Console.ForegroundColor = ConsoleColor.White;
             Console.Write(" r");
