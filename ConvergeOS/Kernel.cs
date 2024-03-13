@@ -117,6 +117,15 @@ namespace Kernel
 
             // Startup beep time!
             Console.Beep();
+
+            // Tell the user we have debug on
+            if (is_debug == true)
+            {
+                Console.Write("Debug is ");
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("ON");
+                Console.ForegroundColor = ConsoleColor.White;
+            }
         }
 
         /// <summary>
