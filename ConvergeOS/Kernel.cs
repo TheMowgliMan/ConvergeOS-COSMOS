@@ -99,10 +99,10 @@ namespace Kernel
             Console.Clear();
 
             // Get our startup text, add pretty colors
-            Console.ForegroundColor = ConsoleColor.DarkMagenta;
+            Console.ForegroundColor = ConsoleColor.Magenta;
             Console.Write("AspectOS");
 
-            Console.ForegroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write(" Converge");
 
             Console.ForegroundColor = ConsoleColor.White;
