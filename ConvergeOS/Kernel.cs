@@ -142,7 +142,7 @@ namespace Kernel
             {
                 if (code == -1)
                 {
-                    System.Environment.Exit(0);
+                    Sys.Power.Shutdown();
                 } else
                 {
                     DisplayWarningOrDebug("\nCommand finished with " + code.ToString() + " errors!");
