@@ -215,11 +215,65 @@ namespace Kernel
     }
 
     /// <summary>
-    /// A type for adding information abuot users, such as their name or permissions.
+    /// A type for adding information about users, such as their name or permissions.
     /// </summary>
     public class User
     {
-        
+        private string username = "Guest";
+        private string user_file_path = ""; // No file path; as yet unused.
+        private bool is_user_fs_ready = false;
+        private int permissions = 0; // No permissions
+
+        /// <summary>
+        /// Get the username of the user.
+        /// </summary>
+        /// <returns>The username</returns>
+        public string GetUsername()
+        {
+            return username;
+        }
+
+        /// <summary>
+        /// Sets the user's username.
+        /// </summary>
+        /// <param name="new_username">The new username.</param>
+        public void SetUsername(string new_username)
+        {
+            username = new_username;
+
+            // Set the name for the user's media files
+            if (user_file_path == "")
+            {
+                user_file_path = new_username;
+                is_user_fs_ready = true;
+            }
+        }
+
+        /// <summary>
+        /// Get the user's permissions.
+        /// </summary>
+        /// <returns>The user's permissions.</returns>
+        public int GetPermissions()
+        {
+            return permissions;
+        }
+
+        /// <summary>
+        /// Set a user's permissions.
+        /// </summary>
+        /// <param name="permissions_to_change">The permissions as bit flags to change.</param>
+        /// <param name="new_value">Whether to set the permissions to true or false.</param>
+        public void SetPermissions(int permissions_to_change, bool new_value)
+        {
+            // Hope this works!
+            if (new_value)
+            {
+                permissions = permissions | permissions_to_change;
+            } else
+            {
+                permissions = permissions & ~permissions_to_change;
+            }
+        }
     }
 }
 
