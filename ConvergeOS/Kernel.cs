@@ -115,6 +115,17 @@ namespace Kernel
         }
 
         /// <summary>
+        /// Gets only one permission's value
+        /// </summary>
+        /// <param name="permission">The permission to get.</param>
+        /// <returns>The state of that permission.</returns>
+        public bool GetOnePermission(int permission)
+        {
+            int is_perm = permission & permissions;
+            return is_perm != 0;
+        }
+
+        /// <summary>
         /// Set a user's permissions.
         /// </summary>
         /// <param name="permissions_to_change">The permissions as bit flags to change.</param>
