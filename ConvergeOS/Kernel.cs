@@ -156,6 +156,11 @@ namespace Kernel
         public static bool is_debug = true;
 
         /// <summary>
+        /// Reports whether there is an AspectOS Converge filesystem available to use. As we don't have FS support as of r13, we set this to false and don't change it later.
+        /// </summary>
+        public static bool is_aos_fs_installed = false;
+
+        /// <summary>
         /// Returns current revision.
         /// </summary>
         /// <returns>Current revision as an int</returns>
