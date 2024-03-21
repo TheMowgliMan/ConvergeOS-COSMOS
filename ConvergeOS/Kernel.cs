@@ -75,10 +75,38 @@ namespace Kernel
     /// </summary>
     public class User
     {
-        private string username = "Guest";
-        private string user_file_path = ""; // No file path; as yet unused.
-        private bool is_user_fs_ready = false;
-        private int permissions = 0; // No permissions
+        private string username;
+        private string password;
+        private string user_file_path; // As yet unused
+        private bool is_user_fs_ready;
+        private int permissions;
+
+        /// <summary>
+        /// Sets up a blank, basic user
+        /// </summary>
+        public User()
+        {
+            username = "Guest";
+            password = "";
+            user_file_path = "";
+            is_user_fs_ready = false;
+            permissions = 0; // No permissions
+        }
+
+        /// <summary>
+        /// Sets up a user with a name and permissions.
+        /// </summary>
+        /// <param name="username">The username.</param>
+        /// <param name="password">The password.</param>
+        /// <param name="permissions">Any permissions the user has.</param>
+        public User(string username, string password, int permissions)
+        {
+            this.username = username;
+            this.password = password;
+            this.user_file_path = "";
+            this.is_user_fs_ready = false;
+            this.permissions = permissions;
+        }
 
         /// <summary>
         /// Get the username of the user.
@@ -103,6 +131,32 @@ namespace Kernel
                 user_file_path = new_username;
                 is_user_fs_ready = true;
             }
+        }
+
+        /// <summary>
+        /// Checks  to see if the entered password matches the user's password.
+        /// </summary>
+        /// <param name="attempted_password">The password to check</param>
+        /// <returns>Whether the password matches</returns>
+        public bool MatchesPassword(string attempted_password)
+        {
+            if (attempted_password == password || password == "")
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets a new password for the user.
+        /// </summary>
+        /// <param name="new_password">The password to set to.</param>
+        public void SetPassword(string new_password)
+        {
+            password = new_password;
         }
 
         /// <summary>
@@ -159,6 +213,11 @@ namespace Kernel
         /// Reports whether there is an AspectOS Converge filesystem available to use. As we don't have FS support as of r13, we set this to false and don't change it later.
         /// </summary>
         public static bool is_aos_fs_installed = false;
+
+        /// <summary>
+        /// Stores the password of the disk user at a low level where it is hard to find. The implementation should change this before compiling. Disabled when a FS is detected.
+        /// </summary>
+        public static string disk_user_password = "DiskUser";
 
         /// <summary>
         /// Returns current revision.
@@ -234,10 +293,15 @@ namespace Kernel
         }
 
         /// <summary>
-        /// Overridden COSMOS function. DO NOT CALL!
+        /// Overridden COSMOS function. DO NOT CALL! Sets up the OS before we enter the CLI.
         /// </summary>
         protected override void BeforeRun()
         {
+            // Setup basic users
+            List<User> users = new List<User>();
+            users.Add(new User());
+            users.Add(new User("Disk", disk_user_password, /* add more here */);
+
             // Clear console
             Console.Clear();
 
@@ -260,6 +324,17 @@ namespace Kernel
 
             // Startup beep time!
             Console.Beep();
+
+            // Setup users
+            if (!is_aos_fs_installed)
+            {
+                CLIDispLine("There is no AspectOS hard drive installed! Would you like to boot as Disk User? (y/n)");
+                string result = CLIRead();
+                if (result == "y" ||  result == "Y")
+                {
+                    
+                }
+            }
 
             // Tell the user we have debug on
             if (is_debug == true)
