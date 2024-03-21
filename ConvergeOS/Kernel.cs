@@ -8,6 +8,133 @@ using CommandProc;
 namespace Kernel
 {
     /// <summary>
+    /// The bit flags for a user's permissions.
+    /// </summary>
+    [Flags]
+    public enum UserPermissions
+    {
+        /// <summary>
+        /// Bit flag: 0x1.
+        /// 
+        /// Determines if the user can use suser; if on, all other permissions are essentially available.
+        /// </summary>
+        SUSER = 0x1,
+
+        /// <summary>
+        /// Bit flag: 0x2.
+        /// 
+        /// Determines if the user can shut down the machine.
+        /// </summary>
+        EXIT = 0x2,
+
+        /// <summary>
+        /// Bit flag: 0x4.
+        /// 
+        /// Determines if apps or commands run by the user can create and access their own local files.
+        /// </summary>
+        FILE_SANDBOX = 0x4,
+
+        /// <summary>
+        /// Bit flag: 0x8.
+        /// 
+        /// Determines if apps run by the user can access the user's media files (Documents). Commands can always access this. Can be edited without suser.
+        /// </summary>
+        FILE_USER = 0x8,       // Should be 1 except for guest
+
+        /// <summary>
+        /// Bit flag: 0x10.
+        /// 
+        /// Determines if apps and commands run by the user can access general files.
+        /// </summary>
+        FILE_GENERAL = 0x10,
+
+        /// <summary>
+        /// Bit flag: 0x20.
+        /// 
+        /// Determines if apps and commands run by the user can access sensitive core files stored on the hard drive, such as the user permissions file.
+        /// </summary>
+        FILE_SENSITIVE = 0x20,
+
+        /// <summary>
+        /// Bit flag: 0x40.
+        /// 
+        /// Determines if apps run by the user can run suser commands irregardless of the user's actual permissions
+        /// </summary>
+        APP_ROOT = 0x40,       // Defines if apps run by this user can run as root, nomatter the other permissions
+
+        /// <summary>
+        /// Bit flag: 0x80.
+        /// 
+        /// Determines if apps and commands run by the user can access the internet. Some commands can access the internet, if implemented, nomatter the state of this flag.
+        /// </summary>
+        INTERNET = 0x80
+    }
+
+    /// <summary>
+    /// A type for adding information about users, such as their name or permissions.
+    /// </summary>
+    public class User
+    {
+        private string username = "Guest";
+        private string user_file_path = ""; // No file path; as yet unused.
+        private bool is_user_fs_ready = false;
+        private int permissions = 0; // No permissions
+
+        /// <summary>
+        /// Get the username of the user.
+        /// </summary>
+        /// <returns>The username</returns>
+        public string GetUsername()
+        {
+            return username;
+        }
+
+        /// <summary>
+        /// Sets the user's username.
+        /// </summary>
+        /// <param name="new_username">The new username.</param>
+        public void SetUsername(string new_username)
+        {
+            username = new_username;
+
+            // Set the name for the user's media files
+            if (user_file_path == "")
+            {
+                user_file_path = new_username;
+                is_user_fs_ready = true;
+            }
+        }
+
+        /// <summary>
+        /// Get the user's permissions.
+        /// </summary>
+        /// <returns>The user's permissions.</returns>
+        public int GetPermissions()
+        {
+            return permissions;
+        }
+
+        /// <summary>
+        /// Set a user's permissions.
+        /// </summary>
+        /// <param name="permissions_to_change">The permissions as bit flags to change.</param>
+        /// <param name="new_value">Whether to set the permissions to true or false.</param>
+        public void SetPermissions(int permissions_to_change, bool new_value)
+        {
+            // Hope this works!
+            if (new_value)
+            {
+                permissions = permissions | permissions_to_change;
+            }
+            else
+            {
+                permissions = permissions & ~permissions_to_change;
+            }
+        }
+    }
+
+
+    /// <summary>
     /// Low level processes, such as Convergence loading or command-line. Main class that calls all others, but has some public methods and fields which can be called by other classes.
     /// </summary>
     public class Kernel : Sys.Kernel
@@ -23,7 +150,7 @@ namespace Kernel
         /// <returns>Current revision as an int</returns>
         public static int GetRevision()
         {
-            return 12;
+            return 13;
         }
 
         /// <summary>
@@ -149,131 +276,6 @@ namespace Kernel
                 }
             }
         } 
-    }
-
-    /// <summary>
-    /// The bit flags for a user's permissions.
-    /// </summary>
-    [Flags]
-    public enum UserPermissions
-    {
-        /// <summary>
-        /// Bit flag: 0x1.
-        /// 
-        /// Determines if the user can use suser; if on, all other permissions are essentially available.
-        /// </summary>
-        SUSER = 0x1,
-
-        /// <summary>
-        /// Bit flag: 0x2.
-        /// 
-        /// Determines if the user can shut down the machine.
-        /// </summary>
-        EXIT = 0x2,
-
-        /// <summary>
-        /// Bit flag: 0x4.
-        /// 
-        /// Determines if apps or commands run by the user can create and access their own local files.
-        /// </summary>
-        FILE_SANDBOX = 0x4,
-
-        /// <summary>
-        /// Bit flag: 0x8.
-        /// 
-        /// Determines if apps run by the user can access the user's media files (Documents). Commands can always access this. Can be edited without suser.
-        /// </summary>
-        FILE_USER = 0x8,       // Should be 1 except for guest
-
-        /// <summary>
-        /// Bit flag: 0x10.
-        /// 
-        /// Determines if apps and commands run by the user can access general files.
-        /// </summary>
-        FILE_GENERAL = 0x10,
-
-        /// <summary>
-        /// Bit flag: 0x20.
-        /// 
-        /// Determines if apps and commands run by the user can access sensitive core files stored on the hard drive, such as the user permissions file.
-        /// </summary>
-        FILE_SENSITIVE = 0x20,
-
-        /// <summary>
-        /// Bit flag: 0x40.
-        /// 
-        /// Determines if apps run by the user can run suser commands irregardless of the user's actual permissions
-        /// </summary>
-        APP_ROOT = 0x40,       // Defines if apps run by this user can run as root, nomatter the other permissions
-
-        /// <summary>
-        /// Bit flag: 0x80.
-        /// 
-        /// Determines if apps and commands run by the user can access the internet. Some commands can access the internet, if implemented, nomatter the state of this flag.
-        /// </summary>
-        INTERNET = 0x80
-    }
-
-    /// <summary>
-    /// A type for adding information about users, such as their name or permissions.
-    /// </summary>
-    public class User
-    {
-        private string username = "Guest";
-        private string user_file_path = ""; // No file path; as yet unused.
-        private bool is_user_fs_ready = false;
-        private int permissions = 0; // No permissions
-
-        /// <summary>
-        /// Get the username of the user.
-        /// </summary>
-        /// <returns>The username</returns>
-        public string GetUsername()
-        {
-            return username;
-        }
-
-        /// <summary>
-        /// Sets the user's username.
-        /// </summary>
-        /// <param name="new_username">The new username.</param>
-        public void SetUsername(string new_username)
-        {
-            username = new_username;
-
-            // Set the name for the user's media files
-            if (user_file_path == "")
-            {
-                user_file_path = new_username;
-                is_user_fs_ready = true;
-            }
-        }
-
-        /// <summary>
-        /// Get the user's permissions.
-        /// </summary>
-        /// <returns>The user's permissions.</returns>
-        public int GetPermissions()
-        {
-            return permissions;
-        }
-
-        /// <summary>
-        /// Set a user's permissions.
-        /// </summary>
-        /// <param name="permissions_to_change">The permissions as bit flags to change.</param>
-        /// <param name="new_value">Whether to set the permissions to true or false.</param>
-        public void SetPermissions(int permissions_to_change, bool new_value)
-        {
-            // Hope this works!
-            if (new_value)
-            {
-                permissions = permissions | permissions_to_change;
-            } else
-            {
-                permissions = permissions & ~permissions_to_change;
-            }
-        }
     }
 }
 
