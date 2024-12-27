@@ -37,7 +37,7 @@ namespace Kernel
         /// <summary>
         /// Bit flag: 0x8.
         /// 
-        /// Determines if apps run by the user can access the user's media files (Documents). Commands can always access this. Can be edited without suser.
+        /// Determines if apps run by the user can access the user's media files (Documents). Commands can always access these areas. Can be edited without suser.
         /// </summary>
         FILE_USER = 0x8,       // Should be 1 except for guest
 
@@ -189,11 +189,11 @@ namespace Kernel
             // Hope this works!
             if (new_value)
             {
-                permissions = permissions | permissions_to_change;
+                permissions |= permissions_to_change;
             }
             else
             {
-                permissions = permissions & ~permissions_to_change;
+                permissions &= ~permissions_to_change;
             }
         }
     }
@@ -351,20 +351,43 @@ namespace Kernel
         /// </summary>
         protected override void Run()
         {
-            // Get input
-            Console.Write("?>");
-            string cmd = Console.ReadLine();
-
-            int code = CommandProc.CommandProc.Process(cmd);
-            if (code != 0)
+            try
             {
-                if (code == -1)
+                // Get input
+                Console.Write("?>");
+                string cmd = Console.ReadLine();
+
+                int code = CommandProc.CommandProc.Process(cmd);
+                if (code != 0)
                 {
-                    Sys.Power.Shutdown();
-                } else
-                {
-                    DisplayWarningOrDebug("\nCommand finished with " + code.ToString() + " errors!");
+                    if (code == -1)
+                    {
+                        Sys.Power.Shutdown();
+                    }
+                    else
+                    {
+                        DisplayWarningOrDebug("\nCommand finished with " + code.ToString() + " errors!");
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                // Big thank-you to Andrew hare for this code from https://stackoverflow.com/a/4272601, which has been modified for this namespace
+                var stringBuilder = new StringBuilder();
+
+                while (ex != null)
+                {
+                    stringBuilder.AppendLine(ex.Message);
+                    stringBuilder.AppendLine(ex.StackTrace);
+
+                    ex = ex.InnerException;
+                }
+
+                var msg = stringBuilder.ToString();
+                // End Andrew's code
+
+
+                DisplayError("\nC# Error:\n\n" + msg);
             }
         } 
     }

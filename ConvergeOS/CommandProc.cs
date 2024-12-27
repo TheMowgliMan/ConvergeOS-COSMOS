@@ -15,7 +15,7 @@ namespace CommandProc
         /// </summary>
         /// <param name="command">The command to process</param>
         /// <returns>
-        ///     Special return codes which the kernel uses to determine outcomes.
+        ///     Special return codes which the kernel uses to determine outcomes:
         ///     -1: Exit system;
         ///     0: Success
         ///     >1: Finished with errors
@@ -46,6 +46,10 @@ namespace CommandProc
                     {
                         Kernel.Kernel.DisplayError("Too many arguments for 'debug'!");
                         code += 1;
+                    }
+                    else if (cmd_split.Length == 0)
+                    {
+                        Kernel.Kernel.DisplayError("Too few arguments for 'debug'!")
                     }
                     else
                     {
