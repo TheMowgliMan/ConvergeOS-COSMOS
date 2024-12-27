@@ -67,7 +67,14 @@ namespace Kernel
         /// 
         /// Determines if apps and commands run by the user can access the internet. Some commands can access the internet, if implemented, nomatter the state of this flag.
         /// </summary>
-        INTERNET = 0x80
+        INTERNET = 0x80,
+
+        /// <summary>
+        /// Bit flag: 0xFF.
+        /// 
+        /// All flags, for convenience.
+        /// </summary>
+        ALL = 0xFF
     }
 
     /// <summary>
@@ -225,7 +232,7 @@ namespace Kernel
         /// <returns>Current revision as an int</returns>
         public static int GetRevision()
         {
-            return 13;
+            return 14;
         }
 
         /// <summary>
@@ -297,52 +304,73 @@ namespace Kernel
         /// </summary>
         protected override void BeforeRun()
         {
-            // Setup basic users
-            List<User> users = new List<User>();
-            users.Add(new User());
-            users.Add(new User("Disk", disk_user_password, /* add more here */);
+            try
+            { 
+                // Setup basic users
+                List<User> users = new List<User>();
+                users.Add(new User());
+                users.Add(new User("Disk", disk_user_password, (int)UserPermissions.ALL));
 
-            // Clear console
-            Console.Clear();
+                // Clear console
+                Console.Clear();
 
-            // Get our startup text, add pretty colors
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.Write("AspectOS");
+                // Get our startup text, add pretty colors
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.Write("AspectOS");
 
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.Write(" Converge");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.Write(" Converge");
 
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.Write(" r");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.Write(" r");
 
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write(GetRevision());
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.Write(GetRevision());
 
-            // We leave it color white
-            Console.ForegroundColor = ConsoleColor.White;
-            Console.WriteLine(" pre-alpha");
+                // We leave it color white
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(" pre-alpha");
 
-            // Startup beep time!
-            Console.Beep();
+                // Startup beep time!
+                Console.Beep();
 
-            // Setup users
-            if (!is_aos_fs_installed)
-            {
-                CLIDispLine("There is no AspectOS hard drive installed! Would you like to boot as Disk User? (y/n)");
-                string result = CLIRead();
-                if (result == "y" ||  result == "Y")
+                // Setup users
+                if (!is_aos_fs_installed)
                 {
-                    
+                    CLIDispLine("There is no AspectOS hard drive installed! Would you like to boot as Disk User? (y/n)");
+                    string result = CLIRead();
+                    if (result == "y" || result == "Y")
+                    {
+
+                    }
+                }
+
+                // Tell the user we have debug on
+                if (is_debug == true)
+                {
+                    Console.Write("Debug is ");
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("ON");
+                    Console.ForegroundColor = ConsoleColor.White;
                 }
             }
-
-            // Tell the user we have debug on
-            if (is_debug == true)
+            catch (Exception ex)
             {
-                Console.Write("Debug is ");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("ON");
-                Console.ForegroundColor = ConsoleColor.White;
+                // Big thank-you to Andrew hare for this code from https://stackoverflow.com/a/4272601, which has been modified for this namespace
+                var stringBuilder = new StringBuilder();
+
+                while (ex != null)
+                {
+                    stringBuilder.AppendLine(ex.Message);
+                    stringBuilder.AppendLine(ex.StackTrace);
+
+                    ex = ex.InnerException;
+                }
+
+                var msg = stringBuilder.ToString();
+                // End Andrew's code
+
+                DisplayError("\nC# Error:\n\n" + msg);
             }
         }
 
