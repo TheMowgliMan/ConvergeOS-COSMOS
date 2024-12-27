@@ -87,6 +87,7 @@ namespace Kernel
         private string user_file_path; // As yet unused
         private bool is_user_fs_ready;
         private int permissions;
+        private bool had_failed_access; // Tells the user there was a failed login
 
         /// <summary>
         /// Sets up a blank, basic user
@@ -98,6 +99,7 @@ namespace Kernel
             user_file_path = "";
             is_user_fs_ready = false;
             permissions = 0; // No permissions
+            had_failed_access = false;
         }
 
         /// <summary>
@@ -141,7 +143,7 @@ namespace Kernel
         }
 
         /// <summary>
-        /// Checks  to see if the entered password matches the user's password.
+        /// Checks  to see if the entered password matches the user's password. Automatically sets 'had_failed_access' to true.
         /// </summary>
         /// <param name="attempted_password">The password to check</param>
         /// <returns>Whether the password matches</returns>
@@ -153,6 +155,7 @@ namespace Kernel
             }
             else
             {
+                had_failed_access = true;
                 return false;
             }
         }
@@ -225,6 +228,15 @@ namespace Kernel
         /// Stores the password of the disk user at a low level where it is hard to find. The implementation should change this before compiling. Disabled when a FS is detected.
         /// </summary>
         public static string disk_user_password = "DiskUser";
+
+        /// <summary>
+        /// The index of the "user" array used to identify the current user.
+        /// 
+        /// Defaults to 'int.MaxValue' which is "user unset".
+        /// </summary>
+        public static int user_index = int.MaxValue;
+
+        List<User> users = new List<User>();
 
         /// <summary>
         /// Returns current revision.
@@ -341,7 +353,13 @@ namespace Kernel
                     string result = CLIRead();
                     if (result == "y" || result == "Y")
                     {
+                        CLIDispLine("Password? >");
+                        result = CLIRead();
 
+                        if (users[1].MatchesPassword(result))
+                        {
+                            user_index = 1;
+                        }
                     }
                 }
 
@@ -382,7 +400,7 @@ namespace Kernel
             try
             {
                 // Get input
-                Console.Write("?>");
+                Console.Write(users[user_index].GetUsername() + "?>");
                 string cmd = Console.ReadLine();
 
                 int code = CommandProc.CommandProc.Process(cmd);

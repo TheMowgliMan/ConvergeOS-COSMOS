@@ -49,7 +49,7 @@ namespace CommandProc
                     }
                     else if (cmd_split.Length == 0)
                     {
-                        Kernel.Kernel.DisplayError("Too few arguments for 'debug'!")
+                        Kernel.Kernel.DisplayError("Too few arguments for 'debug'!");
                     }
                     else
                     {
