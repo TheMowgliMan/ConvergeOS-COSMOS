@@ -236,6 +236,10 @@ namespace Kernel
         /// </summary>
         public static int user_index = int.MaxValue;
 
+
+        /// <summary>
+        /// The actual array of users.
+        /// </summary>
         List<User> users = new List<User>();
 
         /// <summary>
@@ -319,7 +323,6 @@ namespace Kernel
             try
             { 
                 // Setup basic users
-                List<User> users = new List<User>();
                 users.Add(new User());
                 users.Add(new User("Disk", disk_user_password, (int)UserPermissions.ALL));
 
