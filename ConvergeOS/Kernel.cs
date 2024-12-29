@@ -389,11 +389,11 @@ namespace Kernel
             try
             {
                 // Get input
-                if (user_index != int.MaxValue) {
+                if (user_index < users.Count) {
                     Console.Write(users[user_index].GetUsername() + "?>");
                 } else
                 {
-                    Console.Write("Logged Out" + "?>");
+                    Console.Write(user_index.ToString() + "?>");
                 }
                 string cmd = Console.ReadLine();
 
