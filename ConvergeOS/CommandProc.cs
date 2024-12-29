@@ -72,7 +72,7 @@ namespace CommandProc
                 }
                 else if (cmd_split[0] == "list")
                 {
-                    Kernel.Kernel.CLIDisp("\ndebug\necho\nexit\nlist\nlogout");
+                    Kernel.Kernel.CLIDisp("\ndebug\necho\nexit\nlist\nlogin\nlogout");
                 }
                 else if (cmd_split[0] == "logout")
                 {
@@ -92,6 +92,32 @@ namespace CommandProc
                     if (Kernel.Kernel.users[Kernel.Kernel.user_index].MatchesPassword(Kernel.Kernel.CLIRead()))
                     {
                         Kernel.Kernel.user_index = 0;
+                    }
+                }
+                else if (cmd_split[0] == "login")
+                {
+                    if (cmd_split.Length != 2)
+                    {
+                        Kernel.Kernel.DisplayError("Wrong number of arguments for 'login'!");
+                        code += 1;
+                    }
+
+                    var matched = false;
+                    for (int i = 0; i < Kernel.Kernel.users.Count; i++)
+                    {
+                        if (Kernel.Kernel.users[i].GetUsername() == cmd_split[1])
+                        {
+                            Kernel.Kernel.CLIDisp("Password? > ");
+                            if (Kernel.Kernel.users[i].MatchesPassword(Kernel.Kernel.CLIRead()))
+                            {
+                                Kernel.Kernel.user_index = i;
+                            }
+                        }
+                    }
+
+                    if (matched == false)
+                    {
+                        Kernel.Kernel.DisplayError("User " + cmd_split[1] + " does not exist!");
                     }
                 }
                 else
