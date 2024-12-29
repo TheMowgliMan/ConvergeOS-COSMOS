@@ -353,12 +353,15 @@ namespace Kernel
                     string result = CLIRead();
                     if (result == "y" || result == "Y")
                     {
-                        CLIDispLine("Password? >");
+                        CLIDispLine("Password?");
                         result = CLIRead();
 
                         if (users[1].MatchesPassword(result))
                         {
                             user_index = 1;
+                        } else
+                        {
+                            user_index = 0;
                         }
                     }
                 }
@@ -374,21 +377,7 @@ namespace Kernel
             }
             catch (Exception ex)
             {
-                // Big thank-you to Andrew hare for this code from https://stackoverflow.com/a/4272601, which has been modified for this namespace
-                var stringBuilder = new StringBuilder();
-
-                while (ex != null)
-                {
-                    stringBuilder.AppendLine(ex.Message);
-                    stringBuilder.AppendLine(ex.StackTrace);
-
-                    ex = ex.InnerException;
-                }
-
-                var msg = stringBuilder.ToString();
-                // End Andrew's code
-
-                DisplayError("\nC# Error:\n\n" + msg);
+                DisplayError("\nC# Error:\n\n" + ex.ToString());
             }
         }
 
@@ -400,7 +389,12 @@ namespace Kernel
             try
             {
                 // Get input
-                Console.Write(users[user_index].GetUsername() + "?>");
+                if (user_index != int.MaxValue) {
+                    Console.Write(users[user_index].GetUsername() + "?>");
+                } else
+                {
+                    Console.Write("Logged Out" + "?>");
+                }
                 string cmd = Console.ReadLine();
 
                 int code = CommandProc.CommandProc.Process(cmd);
@@ -418,22 +412,7 @@ namespace Kernel
             }
             catch (Exception ex)
             {
-                // Big thank-you to Andrew hare for this code from https://stackoverflow.com/a/4272601, which has been modified for this namespace
-                var stringBuilder = new StringBuilder();
-
-                while (ex != null)
-                {
-                    stringBuilder.AppendLine(ex.Message);
-                    stringBuilder.AppendLine(ex.StackTrace);
-
-                    ex = ex.InnerException;
-                }
-
-                var msg = stringBuilder.ToString();
-                // End Andrew's code
-
-
-                DisplayError("\nC# Error:\n\n" + msg);
+                DisplayError("\nC# Error:\n\n" + ex.ToString());
             }
         } 
     }
