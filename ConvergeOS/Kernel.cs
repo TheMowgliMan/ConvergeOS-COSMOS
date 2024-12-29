@@ -4,6 +4,7 @@ using System.Text;
 using Sys = Cosmos.System;
 
 using CommandProc;
+using System.Xml;
 
 namespace Kernel
 {
@@ -86,7 +87,7 @@ namespace Kernel
         private string password;
         private string user_file_path; // As yet unused
         private bool is_user_fs_ready;
-        private int permissions;
+        private uint permissions;
         private bool had_failed_access; // Tells the user there was a failed login
 
         /// <summary>
@@ -108,7 +109,7 @@ namespace Kernel
         /// <param name="username">The username.</param>
         /// <param name="password">The password.</param>
         /// <param name="permissions">Any permissions the user has.</param>
-        public User(string username, string password, int permissions)
+        public User(string username, string password, uint permissions)
         {
             this.username = username;
             this.password = password;
@@ -173,7 +174,7 @@ namespace Kernel
         /// Get the user's permissions.
         /// </summary>
         /// <returns>The user's permissions.</returns>
-        public int GetPermissions()
+        public uint GetPermissions()
         {
             return permissions;
         }
@@ -183,9 +184,9 @@ namespace Kernel
         /// </summary>
         /// <param name="permission">The permission to get.</param>
         /// <returns>The state of that permission.</returns>
-        public bool GetOnePermission(int permission)
+        public bool GetOnePermission(uint permission)
         {
-            int is_perm = permission & permissions;
+            uint is_perm = permission & permissions;
             return is_perm != 0;
         }
 
@@ -194,7 +195,7 @@ namespace Kernel
         /// </summary>
         /// <param name="permissions_to_change">The permissions as bit flags to change.</param>
         /// <param name="new_value">Whether to set the permissions to true or false.</param>
-        public void SetPermissions(int permissions_to_change, bool new_value)
+        public void SetPermissions(uint permissions_to_change, bool new_value)
         {
             // Hope this works!
             if (new_value)
@@ -236,6 +237,11 @@ namespace Kernel
         /// </summary>
         public static int user_index = int.MaxValue;
 
+        /// <summary>
+        /// How many C# errors in a row there have been.
+        /// </summary>
+        public static uint cumulative_errors = 0;
+
 
         /// <summary>
         /// The actual array of users.
@@ -248,7 +254,7 @@ namespace Kernel
         /// <returns>Current revision as an int</returns>
         public static int GetRevision()
         {
-            return 14;
+            return 26;
         }
 
         /// <summary>
@@ -412,10 +418,29 @@ namespace Kernel
                         DisplayWarningOrDebug("\nCommand finished with " + code.ToString() + " errors!");
                     }
                 }
+
+                cumulative_errors = 0;
             }
             catch (Exception ex)
             {
                 DisplayError("\nC# Error:\n\n" + ex.ToString());
+                cumulative_errors++;
+
+                if (ex.InnerException != null)
+                {
+                    DisplayError("\nInner C# Error:\n\n" + ex.ToString());
+                    cumulative_errors++;
+                }
+
+                // We want to hang the CPU if there were over five cumulative errors, that way we can read the exception
+                if (cumulative_errors > 5)
+                {
+                    DisplayWarningOrDebug("Over five cumulative C# errors, hanging...");
+                    while (true)
+                    {
+                        ;
+                    }
+                }
             }
         } 
     }

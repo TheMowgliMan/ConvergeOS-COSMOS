@@ -69,6 +69,10 @@ namespace CommandProc
                 {
                     return -1;
                 }
+                else if (cmd_split[0] == "list")
+                {
+                    Kernel.Kernel.CLIDisp("\ndebug\necho\nexit\nlist");
+                }
                 else
                 {
                     Kernel.Kernel.DisplayError("Command '" + cmd_split[0] + "' does not exist");
