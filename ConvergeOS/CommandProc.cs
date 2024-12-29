@@ -111,6 +111,10 @@ namespace CommandProc
                             if (Kernel.Kernel.users[i].MatchesPassword(Kernel.Kernel.CLIRead()))
                             {
                                 Kernel.Kernel.user_index = i;
+                                matched = true;
+                            } else
+                            {
+                                Kernel.Kernel.DisplayError("Incorrect password! This has been logged!");
                             }
                         }
                     }
@@ -118,6 +122,13 @@ namespace CommandProc
                     if (matched == false)
                     {
                         Kernel.Kernel.DisplayError("User " + cmd_split[1] + " does not exist!");
+                        code += 1;
+                    } else
+                    {
+                        if (Kernel.Kernel.users[Kernel.Kernel.user_index].had_failed_access)
+                        {
+                            Kernel.Kernel.DisplayError("This user was attempted to be accessed!");
+                        }
                     }
                 }
                 else

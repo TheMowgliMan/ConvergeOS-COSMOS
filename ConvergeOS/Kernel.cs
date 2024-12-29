@@ -88,7 +88,7 @@ namespace Kernel
         private string user_file_path; // As yet unused
         private bool is_user_fs_ready;
         private uint permissions;
-        private bool had_failed_access; // Tells the user there was a failed login
+        public bool had_failed_access; // Tells the user there was a failed login
 
         /// <summary>
         /// Sets up a blank, basic user
