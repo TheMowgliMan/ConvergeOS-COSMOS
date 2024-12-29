@@ -246,7 +246,7 @@ namespace Kernel
         /// <summary>
         /// The actual array of users.
         /// </summary>
-        List<User> users = new List<User>();
+        public static List<User> users = new List<User>();
 
         /// <summary>
         /// Returns current revision.

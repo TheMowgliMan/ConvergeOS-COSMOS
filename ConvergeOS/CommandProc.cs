@@ -50,6 +50,7 @@ namespace CommandProc
                     else if (cmd_split.Length == 0)
                     {
                         Kernel.Kernel.DisplayError("Too few arguments for 'debug'!");
+                        code += 1;
                     }
                     else
                     {
@@ -71,7 +72,27 @@ namespace CommandProc
                 }
                 else if (cmd_split[0] == "list")
                 {
-                    Kernel.Kernel.CLIDisp("\ndebug\necho\nexit\nlist");
+                    Kernel.Kernel.CLIDisp("\ndebug\necho\nexit\nlist\nlogout");
+                }
+                else if (cmd_split[0] == "logout")
+                {
+                    if (cmd_split.Length > 1)
+                    {
+                        Kernel.Kernel.DisplayError("Too many arguments for 'logout'!");
+                        code += 1;
+                    }
+
+                    if (Kernel.Kernel.user_index == 0)
+                    {
+                        Kernel.Kernel.DisplayError("Can't logout from guest user!");
+                        code += 1;
+                    }
+
+                    Kernel.Kernel.CLIDisp("Password? > ");
+                    if (Kernel.Kernel.users[Kernel.Kernel.user_index].MatchesPassword(Kernel.Kernel.CLIRead()))
+                    {
+                        Kernel.Kernel.user_index = 0;
+                    }
                 }
                 else
                 {
